@@ -6,7 +6,23 @@ import CoreBluetooth
 //  Created by Brian Greeson on 8/16/25.
 //
 import SwiftUI
+struct CapsuleButton: ViewModifier {
+    var isOn: Bool
 
+    func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 10)
+            .padding(.horizontal, 15)
+            .background(isOn ? Color.red : Color.blue)
+            .foregroundStyle(.white)
+            .clipShape(Capsule())
+    }
+}
+extension View {
+    func capsuleButton(isOn: Bool) -> some View {
+        self.modifier(CapsuleButton(isOn: isOn))
+    }
+}
 struct ContentView: View {
     @StateObject private var scanner = BLEScanner()
 
@@ -15,24 +31,32 @@ struct ContentView: View {
             Button(scanner.isScanning ? "Stop" : "Scan") {
                 scanner.isScanning ? scanner.stop() : scanner.start()
             }
-            .buttonStyle(.borderedProminent)
-
-            Text(statusText(scanner.state))
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-
-            List(scanner.devices.indices, id: \.self) { i in
-                let item = scanner.devices[i]
-                HStack {
-
-                    Text(item.name)
-                    Spacer()
-                    Image(systemName: "chart.bar.fill", variableValue: rssiValue(item.rssi))
-                    Text("RSSI \(item.rssi)")
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                }
+            .capsuleButton(isOn: scanner.isScanning)
+            
+            if(scanner.state != CBManagerState.poweredOn) {
+                Text(statusText(scanner.state))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
+            let sortedDevices =   scanner.devices.sorted { $0.value.rssi > $1.value.rssi}
+            List(sortedDevices, id: \.key) {id, device in
+                VStack{
+                    Text(id.uuidString)
+                        .font(.body)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                    
+                    HStack {
+                        
+                        Text(device.name ).font(.subheadline)
+                        Spacer()
+                        Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
+                        Text("RSSI \(device.rssi)")
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                    }
+                }}
         }
         .padding()
     }

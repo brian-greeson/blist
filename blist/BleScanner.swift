@@ -1,8 +1,13 @@
 import SwiftUI
 import CoreBluetooth
 
+struct BleDevice {
+var name: String
+var rssi: Int
+}
+
 final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
-    @MainActor @Published var devices: [(name: String, rssi: Int)] = []
+    @MainActor @Published var devices: [UUID: BleDevice] = [:]
     @MainActor @Published var isScanning = false
     @MainActor @Published var state: CBManagerState = .unknown
 
@@ -27,10 +32,13 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
         let name = peripheral.name
             ?? (advertisementData[CBAdvertisementDataLocalNameKey] as? String)
             ?? "Unknown"
+        
+        let identifier = peripheral.identifier
         print(peripheral)
 
         Task { @MainActor in
-            devices.append((name, RSSI.intValue))
+            devices[identifier] = BleDevice(name: name, rssi: RSSI.intValue)
+        
         }
     }
 
