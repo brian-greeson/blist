@@ -1,9 +1,10 @@
-import SwiftUI
 import CoreBluetooth
+import SwiftUI
 
 struct BleDevice {
-var name: String
-var rssi: Int
+    var name: String
+    var rssi: Int
+    var lastUpdated: Date
 }
 
 final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
@@ -25,20 +26,33 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
         }
     }
 
-    func centralManager(_ central: CBCentralManager,
-                        didDiscover peripheral: CBPeripheral,
-                        advertisementData: [String : Any],
-                        rssi RSSI: NSNumber) {
-        let name = peripheral.name
+    func centralManager(
+        _ central: CBCentralManager,
+        didDiscover peripheral: CBPeripheral,
+        advertisementData: [String: Any],
+        rssi RSSI: NSNumber
+    ) {
+        let name =
+            peripheral.name
             ?? (advertisementData[CBAdvertisementDataLocalNameKey] as? String)
             ?? "Unknown"
-        
-        let identifier = peripheral.identifier
-        print(peripheral)
+
+        let id = peripheral.identifier
+        let newRSSI = RSSI.intValue
 
         Task { @MainActor in
-            devices[identifier] = BleDevice(name: name, rssi: RSSI.intValue)
-        
+            let now = Date()
+            if let old = devices[id] {
+                // Throttle update to 1 second
+                if (abs(now.timeIntervalSince(old.lastUpdated)) > 1) {
+                    // Only update if RSSI moved enough (e.g., ≥ 2 dB)
+                    if abs(old.rssi - newRSSI) >= 2 {
+                        devices[id] = BleDevice(name: old.name, rssi: newRSSI, lastUpdated: now)
+                    }
+                }
+            } else {
+                devices[id] = BleDevice(name: name, rssi: newRSSI, lastUpdated: now)
+            }
         }
     }
 
@@ -47,8 +61,10 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
         guard central.state == .poweredOn else { return }
         devices.removeAll()
         isScanning = true
-        central.scanForPeripherals(withServices: nil,
-                                   options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
+        central.scanForPeripherals(
+            withServices: nil,
+            options: [CBCentralManagerScanOptionAllowDuplicatesKey: true]
+        )
     }
 
     @MainActor func stop() {
