@@ -1,11 +1,13 @@
 import CoreBluetooth
+import SwiftUI
+
 //
 //  ContentView.swift
 //  blist
 //
 //  Created by Brian Greeson on 8/16/25.
 //
-import SwiftUI
+
 struct CapsuleButton: ViewModifier {
     var isOn: Bool
 
@@ -18,55 +20,103 @@ struct CapsuleButton: ViewModifier {
             .clipShape(Capsule())
     }
 }
+
 extension View {
     func capsuleButton(isOn: Bool) -> some View {
         self.modifier(CapsuleButton(isOn: isOn))
     }
 }
+
 struct ContentView: View {
     @StateObject private var scanner = BLEScanner()
-
+    @State private var favorites: [UUID] = []
     var body: some View {
-        VStack(spacing: 12) {
+        NavigationStack() {
             Button(scanner.isScanning ? "Stop" : "Scan") {
                 scanner.isScanning ? scanner.stop() : scanner.start()
             }
             .capsuleButton(isOn: scanner.isScanning)
-            
-            if(scanner.state != CBManagerState.poweredOn) {
+
+            if scanner.state != CBManagerState.poweredOn {
                 Text(statusText(scanner.state))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
-            let sortedDevices =   scanner.devices.sorted { $0.value.rssi > $1.value.rssi}
-            List(sortedDevices, id: \.key) {id, device in
-                VStack{
+
+            let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
+
+            if favorites.isEmpty {
+                Text("No favorites yet.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            } else {
+                let favoriteDevices = sortedDevices.filter { favorites.contains($0.key) }
+                List(favoriteDevices, id: \.key) { id, device in
+                    VStack {
+                        Text(id.uuidString)
+                            .font(.body)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                        HStack {
+                            Text(device.name).font(.subheadline)
+                            Spacer()
+                            Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
+                            Text("RSSI \(device.rssi)")
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                                .font(.caption)
+                            Button{
+                                if let deviceIndex = favorites.firstIndex(of: id){
+                                    favorites.remove(at: deviceIndex)
+                                }
+                            }label: {
+                                Image(systemName: "star.fill")
+                            }
+                           
+
+                        }
+                    }
+                }
+            }
+
+            List(sortedDevices, id: \.key) { id, device in
+                VStack {
                     Text(id.uuidString)
                         .font(.body)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
-                    
+
                     HStack {
-                        
-                        Text(device.name ).font(.subheadline)
+
+                        Text(device.name).font(.subheadline)
                         Spacer()
                         Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
                         Text("RSSI \(device.rssi)")
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
                             .font(.caption)
+                        Button {
+                            if (!favorites.contains(id)){
+                                favorites.append(id)
+                            }
+                        } label: {
+                            Image(systemName: "star")
+                        }
+
                     }
-                }}
+
+                }
+            }
         }
         .padding()
     }
     func rssiValue(_ rssi: Int) -> Double {
 
-        if rssi > -55 {
+        if rssi > -40{
             return 1.0
-        } else if rssi > -55 {
+        } else if rssi > -60 {
             return 0.5
-        } else if rssi > -65 {
+        } else if rssi > -70 {
             return 0.25
         } else {
             return 0.0
