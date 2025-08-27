@@ -1,7 +1,8 @@
 import CoreBluetooth
 import SwiftUI
 
-struct BleDevice {
+struct BleDevice: Identifiable {
+    var id: UUID
     var name: String
     var rssi: Int
     var lastUpdated: Date
@@ -11,7 +12,18 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
     @MainActor @Published var devices: [UUID: BleDevice] = [:]
     @MainActor @Published var isScanning = false
     @MainActor @Published var state: CBManagerState = .unknown
-
+    @MainActor var statusText: String  {
+        switch state {
+        case .unknown: return "Bluetooth state: unknown"
+        case .resetting: return "Bluetooth state: resetting"
+        case .unsupported: return "Bluetooth unsupported on this device"
+        case .unauthorized: return "Bluetooth unauthorized"
+        case .poweredOff: return "Bluetooth is off"
+        case .poweredOn: return "Bluetooth is on"
+        @unknown default: return "Bluetooth state: ?"
+        }
+    }
+    
     private var central: CBCentralManager!
 
     override init() {
@@ -35,7 +47,7 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
         let name =
             peripheral.name
             ?? (advertisementData[CBAdvertisementDataLocalNameKey] as? String)
-            ?? "Unknown"
+            ?? "unknown"
 
         let id = peripheral.identifier
         let newRSSI = RSSI.intValue
@@ -47,11 +59,11 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
                 if (abs(now.timeIntervalSince(old.lastUpdated)) > 1) {
                     // Only update if RSSI moved enough (e.g., ≥ 2 dB)
                     if abs(old.rssi - newRSSI) >= 2 {
-                        devices[id] = BleDevice(name: old.name, rssi: newRSSI, lastUpdated: now)
+                        devices[id] = BleDevice(id: id, name: old.name, rssi: newRSSI, lastUpdated: now)
                     }
                 }
             } else {
-                devices[id] = BleDevice(name: name, rssi: newRSSI, lastUpdated: now)
+                devices[id] = BleDevice(id: id, name: name, rssi: newRSSI, lastUpdated: now)
             }
         }
     }
@@ -72,4 +84,6 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate {
         central.stopScan()
         isScanning = false
     }
+    
+    
 }

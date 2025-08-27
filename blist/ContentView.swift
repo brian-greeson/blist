@@ -7,6 +7,17 @@ import SwiftUI
 //
 //  Created by Brian Greeson on 8/16/25.
 //
+struct DeviceDetailView: View {
+    let device: BleDevice
+    var body: some View {
+        VStack {
+            Text(device.name).font(.headline)
+            Text(device.id.uuidString).font(.caption)
+            Text("RSSI: \(device.rssi)")
+            Text(device.lastUpdated, style: .relative)
+        }
+    }
+}
 
 struct DeviceCard: View {
     let id: UUID
@@ -14,7 +25,7 @@ struct DeviceCard: View {
 
     private func rssiValue(_ rssi: Int) -> Double {
 
-        if rssi > -40 {
+        if rssi > -45 {
             return 1.0
         } else if rssi > -60 {
             return 0.5
@@ -29,7 +40,7 @@ struct DeviceCard: View {
         HStack {
             VStack {
                 HStack {
-                    Text(device.name).font(.subheadline)
+                    Text(device.name.capitalized).font(.subheadline)
                     Spacer()
                     Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
                     Text("RSSI \(device.rssi)")
@@ -49,20 +60,24 @@ struct DeviceCard: View {
 struct ContentView: View {
     @StateObject private var scanner = BLEScanner()
     @State private var favorites: [UUID] = []
+    @State private var hideUnknowns: Bool = false
+    @State private var showDeviceDetails: Bool = false
+    @State private var selectedDevice: BleDevice?
 
     var body: some View {
         NavigationStack {
-
+            
             if scanner.state != CBManagerState.poweredOn {
-                Text(statusText(scanner.state))
+                Text(scanner.statusText)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
-
+            
             let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
             let nearbyDevices = sortedDevices.filter { !favorites.contains($0.key) }
+                .filter { hideUnknowns ? $0.value.name != "unknown" : true }
             let favoriteDevices = sortedDevices.filter { favorites.contains($0.key) }
-
+            
             List {
                 Section("Favorites") {
                     if favorites.isEmpty {
@@ -72,7 +87,14 @@ struct ContentView: View {
                     } else {
                         ForEach(favoriteDevices, id: \.key) { id, device in
                             HStack {
-                                DeviceCard(id: id, device: device)
+                                Button {
+                                    selectedDevice = device
+                                    showDeviceDetails = true
+                                } label: {
+                                    DeviceCard(id: id, device: device)
+                                }
+                                .buttonStyle(.plain)
+                                .buttonStyle(.borderless)
                                 Button {
                                     if let deviceIndex = favorites.firstIndex(of: id) {
                                         favorites.remove(at: deviceIndex)
@@ -80,15 +102,23 @@ struct ContentView: View {
                                 } label: {
                                     Image(systemName: "star.fill")
                                 }
+                                .buttonStyle(.borderless)
                             }
                         }
                     }
                 }
-
+                
                 Section {
                     ForEach(nearbyDevices, id: \.key) { id, device in
                         HStack {
-                            DeviceCard(id: id, device: device)
+                            Button {
+                                selectedDevice = device
+                                showDeviceDetails = true
+                            } label: {
+                                DeviceCard(id: id, device: device)
+                            }
+                            .buttonStyle(.plain)
+                            .buttonStyle(.borderless)
                             Button {
                                 if !favorites.contains(id) {
                                     favorites.append(id)
@@ -96,11 +126,21 @@ struct ContentView: View {
                             } label: {
                                 Image(systemName: "star")
                             }
+                            .buttonStyle(.borderless)
                         }
                     }
                 } header: {
-
-                    Text("Showing \(nearbyDevices.count) nearby devices")
+                    HStack {
+                        Button {
+                            hideUnknowns.toggle()
+                        } label: {
+                            Text(hideUnknowns ? "Show all" : "Hide Unknown")
+                                .font(.caption)
+                        }
+                        Spacer()
+                        Text("Showing \(nearbyDevices.count) nearby devices")
+                        
+                    }
                 }
             }
             .toolbar {
@@ -114,9 +154,11 @@ struct ContentView: View {
                     Button {
                         scanner.isScanning ? scanner.stop() : scanner.start()
                     } label: {
+                        Text(scanner.isScanning ? "Stop Scan" : "Start Scan")
+                            .foregroundStyle(scanner.isScanning ? .red : .primary)
                         Image(
                             systemName: scanner.isScanning
-                                ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash"
+                            ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash"
                         )
                         .foregroundStyle(scanner.isScanning ? .red : .primary)
                         .symbolEffect(
@@ -124,25 +166,19 @@ struct ContentView: View {
                             options: .repeat(.continuous),
                             isActive: scanner.isScanning
                         )
-                        Text(scanner.isScanning ? "Stop Scan" : "Start Scan")
-                            .foregroundStyle(scanner.isScanning ? .red : .primary)
                     }
                 }
             }
         }
+        .sheet(item: $selectedDevice){ device in
+            
+                DeviceDetailView(device: device)
+         
+        }
+    
     }
 
-    private func statusText(_ s: CBManagerState) -> String {
-        switch s {
-        case .unknown: return "Bluetooth state: unknown"
-        case .resetting: return "Bluetooth state: resetting"
-        case .unsupported: return "Bluetooth unsupported on this device"
-        case .unauthorized: return "Bluetooth unauthorized"
-        case .poweredOff: return "Bluetooth is off"
-        case .poweredOn: return "Bluetooth is on"
-        @unknown default: return "Bluetooth state: ?"
-        }
-    }
+
 }
 
 #Preview {
