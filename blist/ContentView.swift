@@ -8,111 +8,13 @@ import SwiftUI
 //  Created by Brian Greeson on 8/16/25.
 //
 
-struct CapsuleButton: ViewModifier {
-    var isOn: Bool
+struct DeviceCard: View {
+    let id: UUID
+    let device: BleDevice
 
-    func body(content: Content) -> some View {
-        content
-            .padding(.vertical, 10)
-            .padding(.horizontal, 15)
-            .background(isOn ? Color.red : Color.blue)
-            .foregroundStyle(.white)
-            .clipShape(Capsule())
-    }
-}
+    private func rssiValue(_ rssi: Int) -> Double {
 
-extension View {
-    func capsuleButton(isOn: Bool) -> some View {
-        self.modifier(CapsuleButton(isOn: isOn))
-    }
-}
-
-struct ContentView: View {
-    @StateObject private var scanner = BLEScanner()
-    @State private var favorites: [UUID] = []
-    var body: some View {
-        NavigationStack() {
-            Button(scanner.isScanning ? "Stop" : "Scan") {
-                scanner.isScanning ? scanner.stop() : scanner.start()
-            }
-            .capsuleButton(isOn: scanner.isScanning)
-
-            if scanner.state != CBManagerState.poweredOn {
-                Text(statusText(scanner.state))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-
-            let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
-
-            if favorites.isEmpty {
-                Text("No favorites yet.")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-            } else {
-                let favoriteDevices = sortedDevices.filter { favorites.contains($0.key) }
-                List(favoriteDevices, id: \.key) { id, device in
-                    VStack {
-                        Text(id.uuidString)
-                            .font(.body)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                        HStack {
-                            Text(device.name).font(.subheadline)
-                            Spacer()
-                            Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
-                            Text("RSSI \(device.rssi)")
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                                .font(.caption)
-                            Button{
-                                if let deviceIndex = favorites.firstIndex(of: id){
-                                    favorites.remove(at: deviceIndex)
-                                }
-                            }label: {
-                                Image(systemName: "star.fill")
-                            }
-                           
-
-                        }
-                    }
-                }
-            }
-
-            List(sortedDevices, id: \.key) { id, device in
-                VStack {
-                    Text(id.uuidString)
-                        .font(.body)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
-
-                    HStack {
-
-                        Text(device.name).font(.subheadline)
-                        Spacer()
-                        Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
-                        Text("RSSI \(device.rssi)")
-                            .monospacedDigit()
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
-                        Button {
-                            if (!favorites.contains(id)){
-                                favorites.append(id)
-                            }
-                        } label: {
-                            Image(systemName: "star")
-                        }
-
-                    }
-
-                }
-            }
-        }
-        .padding()
-    }
-    func rssiValue(_ rssi: Int) -> Double {
-
-        if rssi > -40{
+        if rssi > -40 {
             return 1.0
         } else if rssi > -60 {
             return 0.5
@@ -121,8 +23,115 @@ struct ContentView: View {
         } else {
             return 0.0
         }
-
     }
+
+    var body: some View {
+        HStack {
+            VStack {
+                HStack {
+                    Text(device.name).font(.subheadline)
+                    Spacer()
+                    Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
+                    Text("RSSI \(device.rssi)")
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
+                }
+                Text(id.uuidString)
+                    .font(.body)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+            }
+        }
+    }
+}
+
+struct ContentView: View {
+    @StateObject private var scanner = BLEScanner()
+    @State private var favorites: [UUID] = []
+
+    var body: some View {
+        NavigationStack {
+
+            if scanner.state != CBManagerState.poweredOn {
+                Text(statusText(scanner.state))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
+            let nearbyDevices = sortedDevices.filter { !favorites.contains($0.key) }
+            let favoriteDevices = sortedDevices.filter { favorites.contains($0.key) }
+
+            List {
+                Section("Favorites") {
+                    if favorites.isEmpty {
+                        Text("No favorites yet.")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(favoriteDevices, id: \.key) { id, device in
+                            HStack {
+                                DeviceCard(id: id, device: device)
+                                Button {
+                                    if let deviceIndex = favorites.firstIndex(of: id) {
+                                        favorites.remove(at: deviceIndex)
+                                    }
+                                } label: {
+                                    Image(systemName: "star.fill")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Section {
+                    ForEach(nearbyDevices, id: \.key) { id, device in
+                        HStack {
+                            DeviceCard(id: id, device: device)
+                            Button {
+                                if !favorites.contains(id) {
+                                    favorites.append(id)
+                                }
+                            } label: {
+                                Image(systemName: "star")
+                            }
+                        }
+                    }
+                } header: {
+
+                    Text("Showing \(nearbyDevices.count) nearby devices")
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                    } label: {
+                        Image(systemName: "map")
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        scanner.isScanning ? scanner.stop() : scanner.start()
+                    } label: {
+                        Image(
+                            systemName: scanner.isScanning
+                                ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash"
+                        )
+                        .foregroundStyle(scanner.isScanning ? .red : .primary)
+                        .symbolEffect(
+                            .variableColor.iterative.hideInactiveLayers.nonReversing,
+                            options: .repeat(.continuous),
+                            isActive: scanner.isScanning
+                        )
+                        Text(scanner.isScanning ? "Stop Scan" : "Start Scan")
+                            .foregroundStyle(scanner.isScanning ? .red : .primary)
+                    }
+                }
+            }
+        }
+    }
+
     private func statusText(_ s: CBManagerState) -> String {
         switch s {
         case .unknown: return "Bluetooth state: unknown"
