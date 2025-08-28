@@ -12,13 +12,11 @@ import SwiftData
 class FavoriteDevice: Identifiable {
     var id: UUID = UUID()
     var name: String
-    var rssi: Int
     var lastUpdated: Date
     var createdAt: Date
     
     init(name: String, rssi: Int, lastUpdated: Date = Date()) {
         self.name = name
-        self.rssi = rssi
         self.lastUpdated = Date()
         self.createdAt = Date()
     }

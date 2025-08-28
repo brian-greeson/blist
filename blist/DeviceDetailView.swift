@@ -8,18 +8,55 @@
 import SwiftUI
 
 struct DeviceDetailView: View {
-    let device: BleDevice
+    @ObservedObject var scanner: BLEScanner
+    let id: UUID
+
     var body: some View {
-        VStack {
-            Text(device.name).font(.headline)
-            Text(device.id.uuidString).font(.caption)
-            Text("RSSI: \(device.rssi)")
-            Text(device.lastUpdated, style: .relative)
+        if let device = scanner.devices[id] {
+
+            VStack {
+                DeviceCard(id: device.id, device: device).padding()
+                VStack {
+                    Text("Advertisement Data: \(device.advertisementData.count)").font(.headline)
+                    ForEach(device.advertisementData.keys.sorted(), id: \.self) { key in
+                        HStack {
+                            Text(key)
+                            Spacer()
+
+                            Text("\(device.advertisementData[key] ?? "unknown")")
+                        }.padding(.horizontal, 8)
+                    }.padding(.bottom)
+                    if device.services.isEmpty {
+                        HStack{
+                            Text("Loading Services").font(.headline)
+                            ProgressView().padding()
+                        }
+                    } else {
+                        Text("Services: \(device.services.count)").font(.headline)
+                        ForEach(device.services.indices, id: \.self) { i in
+                            Text("\(device.services[i])")
+                        }
+                    }
+                }
+                Spacer()
+
+            }
+        } else {
+            Text("Error loading device")
         }
     }
 }
 
 #Preview {
-    let device = BleDevice(id: UUID(), name: "Test Device", rssi: -65, lastUpdated: Date())
-    DeviceDetailView(device: device)
+    let adData: [String: Any] = ["kCBAdvDataLocalName": "Test Device", "kCBAdvDataIsConnectable": true]
+
+    let device = BleDevice(
+        id: UUID(),
+        name: "Test Device",
+        rssi: -65,
+        advertisementData: adData,
+        lastUpdated: Date(),
+        services: []
+    )
+    DeviceDetailView(scanner: BLEScanner(), id: device.id)
 }

@@ -28,7 +28,7 @@ struct DeviceCard: View {
             HStack {
                 VStack {
                     HStack {
-                        Text(device.name.capitalized).font(.subheadline)
+                        Text(device.name.capitalized).font(.headline)
                         Spacer()
                         Image(systemName: "chart.bar.fill", variableValue: rssiValue(device.rssi))
                         Text("RSSI \(device.rssi)")
@@ -48,6 +48,7 @@ struct DeviceCard: View {
 }
 
 #Preview {
-    let device = BleDevice(id: UUID(), name: "Test Device", rssi: -55, lastUpdated: Date())
+    let adData: [String: Any] = ["kCBAdvDataLocalName": "Test Device", "kCBAdvDataIsConnectable": true]
+    let device = BleDevice(id: UUID(), name: "Test Device", rssi: -65,advertisementData: adData,  lastUpdated: Date(), services: [])
     DeviceCard(id: device.id, device: device)
 }

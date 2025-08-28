@@ -1,6 +1,6 @@
 import CoreBluetooth
 import SwiftUI
-
+import SwiftData
 //
 //  ContentView.swift
 //  blist
@@ -10,10 +10,13 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var scanner = BLEScanner()
+    
     @State private var favorites: [UUID] = []
     @State private var hideUnknowns: Bool = false
     @State private var showDeviceDetails: Bool = false
     @State private var selectedDevice: BleDevice?
+    
+    @Query var favoriteDevices: [FavoriteDevice]
 
     var body: some View {
         NavigationStack {
@@ -30,7 +33,7 @@ struct ContentView: View {
             let favoriteDevices = sortedDevices.filter { favorites.contains($0.key) }
             
             List {
-                Section("Favorites") {
+                Section {
                     if favorites.isEmpty {
                         Text("No favorites yet.")
                             .font(.body)
@@ -47,15 +50,19 @@ struct ContentView: View {
                                 .buttonStyle(.plain)
                                 .buttonStyle(.borderless)
                                 Button {
-                                    if let deviceIndex = favorites.firstIndex(of: id) {
-                                        favorites.remove(at: deviceIndex)
-                                    }
+                               removeFavorite(device)
                                 } label: {
                                     Image(systemName: "star.fill")
                                 }
                                 .buttonStyle(.borderless)
                             }
                         }
+                    }
+                } header: {
+                    HStack{
+                        Text("Favorites")
+                        Spacer()
+                        Text("\(favoriteDevices.count) Favorites")
                     }
                 }
                 
@@ -71,9 +78,7 @@ struct ContentView: View {
                             .buttonStyle(.plain)
                             .buttonStyle(.borderless)
                             Button {
-                                if !favorites.contains(id) {
-                                    favorites.append(id)
-                                }
+                                addFavorite(device)
                             } label: {
                                 Image(systemName: "star")
                             }
@@ -123,14 +128,28 @@ struct ContentView: View {
         }
         .sheet(item: $selectedDevice){ device in
             
-                DeviceDetailView(device: device)
-         
+            DeviceDetailView(scanner: scanner, id: device.id)
+                .onAppear {
+                print("appeared")
+                    scanner.connect(device.id)
+                }
+            
         }
-    
     }
-
-
+    func addFavorite(_ device: BleDevice) {
+        if !favorites.contains(device.id) {
+            favorites.append(device.id)
+       }
+   }
+    func removeFavorite(_ device: BleDevice) {
+       
+        if let deviceIndex = favorites.firstIndex(of: device.id) {
+            favorites.remove(at: deviceIndex)
+        }
 }
+}
+        
+
 
 #Preview {
     ContentView()
