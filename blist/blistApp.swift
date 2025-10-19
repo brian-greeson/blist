@@ -12,9 +12,11 @@ struct blistApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView().onAppear {
-               print("appear")
+               print("main view appearing")
             }
         }
         .modelContainer(for: FavoriteDevice.self)
     }
 }
+
+

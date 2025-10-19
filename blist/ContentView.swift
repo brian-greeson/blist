@@ -1,109 +1,60 @@
 import CoreBluetooth
-import SwiftUI
+import StoreKit
 import SwiftData
+import SwiftUI
+
 //
 //  ContentView.swift
 //  blist
 //
 //  Created by Brian Greeson on 8/16/25.
 //
-
+enum AppView: String, CaseIterable, Codable {
+    case scanView, mapView, detailView
+}
 struct ContentView: View {
     @StateObject private var scanner = BLEScanner()
-    
-    @State private var favorites: [UUID] = []
-    @State private var hideUnknowns: Bool = false
-    @State private var showDeviceDetails: Bool = false
+    @StateObject private var locationManger = LocationManager()
+    //    @State private var favorites: [UUID] = []
+    //    @State private var hideUnknowns: Bool = false
+    //    @State private var showDeviceDetails: Bool = false
+    @State private var currentView: AppView = .mapView
     @State private var selectedDevice: BleDevice?
     
-    @Query var favoriteDevices: [FavoriteDevice]
-
     var body: some View {
+        
         NavigationStack {
-            
-            if scanner.state != CBManagerState.poweredOn {
-                Text(scanner.statusText)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            
-            let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
-            let nearbyDevices = sortedDevices.filter { !favorites.contains($0.key) }
-                .filter { hideUnknowns ? $0.value.name != "unknown" : true }
-            let favoriteDevices = sortedDevices.filter { favorites.contains($0.key) }
-            
-            List {
-                Section {
-                    if favorites.isEmpty {
-                        Text("No favorites yet.")
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(favoriteDevices, id: \.key) { id, device in
-                            HStack {
-                                Button {
-                                    selectedDevice = device
-                                    showDeviceDetails = true
-                                } label: {
-                                    DeviceCard(id: id, device: device)
-                                }
-                                .buttonStyle(.plain)
-                                .buttonStyle(.borderless)
-                                Button {
-                               removeFavorite(device)
-                                } label: {
-                                    Image(systemName: "star.fill")
-                                }
-                                .buttonStyle(.borderless)
-                            }
-                        }
-                    }
-                } header: {
-                    HStack{
-                        Text("Favorites")
-                        Spacer()
-                        Text("\(favoriteDevices.count) Favorites")
-                    }
+            Group{
+                switch currentView {
+                case .scanView:
+                    ScanView(selectedDevice: $selectedDevice, scanner: scanner)
+                case .mapView:
+                    MapView(locationManager: locationManger)
+                default:
+                    ScanView(selectedDevice: $selectedDevice, scanner: scanner)
                 }
-                
-                Section {
-                    ForEach(nearbyDevices, id: \.key) { id, device in
-                        HStack {
-                            Button {
-                                selectedDevice = device
-                                showDeviceDetails = true
-                            } label: {
-                                DeviceCard(id: id, device: device)
-                            }
-                            .buttonStyle(.plain)
-                            .buttonStyle(.borderless)
-                            Button {
-                                addFavorite(device)
-                            } label: {
-                                Image(systemName: "star")
-                            }
-                            .buttonStyle(.borderless)
-                        }
-                    }
-                } header: {
-                    HStack {
-                        Button {
-                            hideUnknowns.toggle()
-                        } label: {
-                            Text(hideUnknowns ? "Show all" : "Hide Unknown")
-                                .font(.caption)
-                        }
-                        Spacer()
-                        Text("Showing \(nearbyDevices.count) nearby devices")
-                        
-                    }
-                }
-            }
-            .toolbar {
+            }.toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
+                        switch currentView {
+                        case .scanView:
+                            currentView = .mapView
+                        case .mapView:
+                            currentView = .scanView
+                        default:
+                            currentView = .scanView
+                        }
                     } label: {
-                        Image(systemName: "map")
+                        switch currentView {
+                        case .scanView:
+                            Image(systemName: "map")
+                      
+                        case .mapView:
+                            Image(systemName: "list.triangle")
+                        
+                        default:
+                            Image(systemName: "map")
+                        }
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -124,32 +75,14 @@ struct ContentView: View {
                         )
                     }
                 }
+                
             }
-        }
-        .sheet(item: $selectedDevice){ device in
-            
-            DeviceDetailView(scanner: scanner, id: device.id)
-                .onAppear {
-                print("appeared")
-                    scanner.connect(device.id)
-                }
+        }.onAppear{
+            locationManger.request()
             
         }
     }
-    func addFavorite(_ device: BleDevice) {
-        if !favorites.contains(device.id) {
-            favorites.append(device.id)
-       }
-   }
-    func removeFavorite(_ device: BleDevice) {
-       
-        if let deviceIndex = favorites.firstIndex(of: device.id) {
-            favorites.remove(at: deviceIndex)
-        }
 }
-}
-        
-
 
 #Preview {
     ContentView()

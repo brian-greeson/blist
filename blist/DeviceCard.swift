@@ -49,6 +49,6 @@ struct DeviceCard: View {
 
 #Preview {
     let adData: [String: Any] = ["kCBAdvDataLocalName": "Test Device", "kCBAdvDataIsConnectable": true]
-    let device = BleDevice(id: UUID(), name: "Test Device", rssi: -65,advertisementData: adData,  lastUpdated: Date(), services: [])
+    let device = BleDevice(id: UUID(), name: "Test Device", rssi: -65,advertisementData: adData,  lastUpdated: Date(), services: [], locations: [])
     DeviceCard(id: device.id, device: device)
 }

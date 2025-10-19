@@ -16,6 +16,7 @@ struct DeviceDetailView: View {
 
             VStack {
                 DeviceCard(id: device.id, device: device).padding()
+                DeviceMapView(device: device)
                 VStack {
                     Text("Advertisement Data: \(device.advertisementData.count)").font(.headline)
                     ForEach(device.advertisementData.keys.sorted(), id: \.self) { key in
@@ -23,7 +24,7 @@ struct DeviceDetailView: View {
                             Text(key)
                             Spacer()
 
-                            Text("\(device.advertisementData[key] ?? "unknown")")
+                            Text(verbatim: String(describing: device.advertisementData[key] ?? "unknown"))
                         }.padding(.horizontal, 8)
                     }.padding(.bottom)
                     if device.services.isEmpty {
@@ -56,7 +57,9 @@ struct DeviceDetailView: View {
         rssi: -65,
         advertisementData: adData,
         lastUpdated: Date(),
-        services: []
+        services: [],
+        locations: []
     )
     DeviceDetailView(scanner: BLEScanner(), id: device.id)
 }
+

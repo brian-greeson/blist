@@ -1,6 +1,12 @@
 import CoreBluetooth
+import CoreLocation
 import SwiftUI
 
+struct LocationWithRssi: Identifiable {
+    let id = UUID()
+    var location: CLLocation
+    var rssi: Int
+}
 struct BleDevice: Identifiable {
     var id: UUID
     var name: String
@@ -8,9 +14,10 @@ struct BleDevice: Identifiable {
     var advertisementData: [String: Any]
     var lastUpdated: Date
     var services: [CBService]
+    var locations: [LocationWithRssi]
 }
 
-final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeripheralDelegate {
+final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     @MainActor @Published var devices: [UUID: BleDevice] = [:]
     @MainActor @Published var isScanning = false
     @MainActor @Published var state: CBManagerState = .unknown
@@ -25,6 +32,7 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
         @unknown default: return "Bluetooth state: ?"
         }
     }
+    @ObservedObject var locationManager = LocationManager()
 
     private var central: CBCentralManager!
     private var peripherals: [UUID: CBPeripheral] = [:]
@@ -32,6 +40,10 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
     override init() {
         super.init()
         central = CBCentralManager(delegate: self, queue: nil)
+        if locationManager.authorized != true {
+            locationManager.request()
+
+        }
 
     }
 
@@ -41,17 +53,17 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
             if state != .poweredOn { isScanning = false }
         }
     }
-    
+
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("central manager didConnect")
-        guard ( peripheral.state == .connected) else {
+        guard peripheral.state == .connected else {
             print("not connected")
             return
         }
         peripheral.delegate = self
         peripheral.discoverServices(nil)
     }
-    
+
     func centralManager(
         _ central: CBCentralManager,
         didDiscover peripheral: CBPeripheral,
@@ -67,7 +79,7 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
         let id = peripheral.identifier
         let newRSSI = RSSI.intValue
         let services = peripheral.services ?? []
-
+        //        let location = locationManager.location?.coordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0)
         // Save a reference to the peripheal
         if peripherals[id] == nil {
             peripherals[id] = peripheral
@@ -75,34 +87,53 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
 
         Task { @MainActor in
             let now = Date()
-            if let old = devices[id] {
+            if var device = devices[id] {
                 // Throttle update to 1 second
-                if abs(now.timeIntervalSince(old.lastUpdated)) > 1 {
-                    // Only update if RSSI moved enough (e.g., ≥ 2 dB)
-                    if abs(old.rssi - newRSSI) >= 2 {
-                        devices[id] = BleDevice(
-                            id: id,
-                            name: old.name,
-                            rssi: newRSSI,
-                            advertisementData: advertisementData,
-                            lastUpdated: now,
-                            services: services
-                        )
+                if abs(now.timeIntervalSince(device.lastUpdated)) > 1 {
+                    device.name = name
+                    device.services = services
+                    
+                    // RSSI must be updated before location updates
+                    if abs(device.rssi - newRSSI) >= 2 {
+                        device.rssi = newRSSI
                     }
+            
+                    if let location = locationManager.location {
+                        if let lastLocation = device.locations.last {
+                            let distance = location.distance(from: lastLocation.location)
+                            if distance >= 1 {  // threshold; adjust as needed
+                                device.locations.append(LocationWithRssi(location: location, rssi: device.rssi))
+                            }
+                        } else {
+                            device.locations.append(LocationWithRssi(location: location, rssi: device.rssi))
+                        }
+                    } else {
+                        print("no location manager location")
+                    }
+
+                
+
+                    device.lastUpdated = now
+                    devices[id] = device
+
                 }
             } else {
-                devices[id] = BleDevice(
-                    id: id,
-                    name: name,
-                    rssi: newRSSI,
-                    advertisementData: advertisementData,
-                    lastUpdated: now,
-                    services: services
-                )
+                if let location = locationManager.location {
+                    devices[id] = BleDevice(
+                        id: id,
+                        name: name,
+                        rssi: newRSSI,
+                        advertisementData: advertisementData,
+                        lastUpdated: now,
+                        services: services,
+                        locations: [LocationWithRssi(location: location, rssi: newRSSI)]
+                    )
+                }
             }
+
         }
     }
-    
+
     func peripheral(
         _ peripheral: CBPeripheral,
         didDiscoverServices error: (any Error)?
@@ -111,8 +142,8 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
             print("Error discovering services: \(String(describing: error))")
             return
         }
-        print(peripheral.name ?? "Unknown Peripheral")
-        print("services: \(peripheral.services ?? [])")
+        //        print(peripheral.name ?? "Unknown Peripheral")
+        //        print("services: \(peripheral.services ?? [])")
         Task { @MainActor in
             devices[peripheral.identifier]?.services = peripheral.services ?? []
         }
@@ -145,8 +176,8 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate,CBP
             return
         }
         central.connect(peripheral)
-    
-       // Move this to did connect callback -> peripheral.discoverServices(nil)
+
+        // Move this to did connect callback -> peripheral.discoverServices(nil)
     }
 
 }

@@ -15,9 +15,20 @@ class FavoriteDevice: Identifiable {
     var lastUpdated: Date
     var createdAt: Date
     
-    init(name: String, rssi: Int, lastUpdated: Date = Date()) {
+    init(id: UUID, name: String) {
+        self.id = id
         self.name = name
         self.lastUpdated = Date()
         self.createdAt = Date()
+    }
+}
+
+extension FavoriteDevice: CustomStringConvertible, CustomDebugStringConvertible {
+    var description: String {
+        "FavoriteDevice(name: \(name), id: \(id.uuidString.prefix(8))…, createdAt: \(createdAt.formatted(date: .abbreviated, time: .shortened)))"
+    }
+
+    var debugDescription: String {
+        "FavoriteDevice(id: \(id.uuidString), name: \(name), createdAt: \(createdAt), lastUpdated: \(lastUpdated)"
     }
 }
