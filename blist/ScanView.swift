@@ -20,12 +20,12 @@ struct ScanView: View {
     @Query var favoriteDevices: [FavoriteDevice]
     var body: some View {
         NavigationStack {
-
             if scanner.state != CBManagerState.poweredOn {
                 Text(scanner.statusText)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
+            
             let favorites = Set(favoriteDevices.map(\.id))
             let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
             let nearbyDevices = sortedDevices.filter { !favorites.contains($0.key) }

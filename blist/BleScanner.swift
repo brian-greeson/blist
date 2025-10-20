@@ -32,8 +32,8 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         @unknown default: return "Bluetooth state: ?"
         }
     }
+    
     @ObservedObject var locationManager = LocationManager()
-
     private var central: CBCentralManager!
     private var peripherals: [UUID: CBPeripheral] = [:]
 

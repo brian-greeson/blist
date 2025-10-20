@@ -400,6 +400,7 @@
 				DEVELOPMENT_TEAM = 27C878UH3T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to scan for nearby devices.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location will be used to show nearby bluetooth devices";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -430,6 +431,7 @@
 				DEVELOPMENT_TEAM = 27C878UH3T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to scan for nearby devices.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location will be used to show nearby bluetooth devices";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

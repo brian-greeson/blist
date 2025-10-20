@@ -5,8 +5,8 @@
 //  Created by Brian Greeson on 10/14/25.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import SwiftUI
 
 final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -22,7 +22,6 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         location = manager.location
     }
 
-    
     func request() {
         manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
@@ -30,13 +29,13 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
-        
+
         authorized = (status == .authorizedWhenInUse || status == .authorizedAlways)
         if authorized {
             manager.startUpdatingLocation()
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Use the most recent location
         if let latest = locations.last {

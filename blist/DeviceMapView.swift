@@ -23,11 +23,11 @@ struct DeviceMapView: View {
         let t = max(0, min(1, (Float(rssi) + 90) / 50))
 
         if t < 0.25 {
-            // Very weak → black with high opacity
-            let alpha = Double(0.2 + t * 2.0)  // 0.2 → 0.7 range
+            // Very weak = black with high opacity
+            let alpha = Double(0.2 + t * 2.0)
             return Color.black.opacity(alpha)
         } else if t < 0.5 {
-            // Weak → green
+            // Weak = green
             let localT = (t - 0.25) / 0.25
             return Color(
                 red: 0.0,
@@ -36,7 +36,7 @@ struct DeviceMapView: View {
                 opacity: 0.7
             )
         } else if t < 0.75 {
-            // Medium → yellow
+            // Medium = yellow
             let localT = (t - 0.5) / 0.25
             return Color(
                 red: Double(localT),
@@ -45,7 +45,7 @@ struct DeviceMapView: View {
                 opacity: 0.7
             )
         } else {
-            // Strong → red
+            // Strong = red
             let localT = (t - 0.75) / 0.25
             return Color(
                 red: 1.0,
@@ -59,14 +59,14 @@ struct DeviceMapView: View {
     private func buildCells(gridSizeMeters: Double = 1.0) -> [ColoredCell] {
         guard !device.locations.isEmpty else { return [] }
 
-        // 1) Bounds in MKMapPoints
+        // Get Bounds in MKMapPoints
         let pts = device.locations.map { MKMapPoint($0.location.coordinate) }
         var minX = pts.map(\.x).min()!
         var maxX = pts.map(\.x).max()!
         var minY = pts.map(\.y).min()!
         var maxY = pts.map(\.y).max()!
 
-        // Pad a bit (2 cells)
+        // Padding 
         let pad = gridSizeMeters * 2.0
         minX -= pad
         minY -= pad

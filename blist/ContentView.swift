@@ -15,16 +15,12 @@ enum AppView: String, CaseIterable, Codable {
 struct ContentView: View {
     @StateObject private var scanner = BLEScanner()
     @StateObject private var locationManger = LocationManager()
-    //    @State private var favorites: [UUID] = []
-    //    @State private var hideUnknowns: Bool = false
-    //    @State private var showDeviceDetails: Bool = false
-    @State private var currentView: AppView = .mapView
+    @State private var currentView: AppView = .scanView
     @State private var selectedDevice: BleDevice?
-    
+
     var body: some View {
-        
         NavigationStack {
-            Group{
+            Group {
                 switch currentView {
                 case .scanView:
                     ScanView(selectedDevice: $selectedDevice, scanner: scanner)
@@ -48,10 +44,10 @@ struct ContentView: View {
                         switch currentView {
                         case .scanView:
                             Image(systemName: "map")
-                      
+
                         case .mapView:
                             Image(systemName: "list.triangle")
-                        
+
                         default:
                             Image(systemName: "map")
                         }
@@ -65,7 +61,7 @@ struct ContentView: View {
                             .foregroundStyle(scanner.isScanning ? .red : .primary)
                         Image(
                             systemName: scanner.isScanning
-                            ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash"
+                                ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash"
                         )
                         .foregroundStyle(scanner.isScanning ? .red : .primary)
                         .symbolEffect(
@@ -75,11 +71,11 @@ struct ContentView: View {
                         )
                     }
                 }
-                
+
             }
-        }.onAppear{
+        }.onAppear {
             locationManger.request()
-            
+
         }
     }
 }

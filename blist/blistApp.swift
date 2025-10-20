@@ -11,9 +11,7 @@ import SwiftData
 struct blistApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView().onAppear {
-               print("main view appearing")
-            }
+            ContentView()
         }
         .modelContainer(for: FavoriteDevice.self)
     }
