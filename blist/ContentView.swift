@@ -30,29 +30,29 @@ struct ContentView: View {
                     ScanView(selectedDevice: $selectedDevice, scanner: scanner)
                 }
             }.toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        switch currentView {
-                        case .scanView:
-                            currentView = .mapView
-                        case .mapView:
-                            currentView = .scanView
-                        default:
-                            currentView = .scanView
-                        }
-                    } label: {
-                        switch currentView {
-                        case .scanView:
-                            Image(systemName: "map")
-
-                        case .mapView:
-                            Image(systemName: "list.triangle")
-
-                        default:
-                            Image(systemName: "map")
-                        }
-                    }
-                }
+                /* ToolbarItem(placement: .topBarLeading) {
+                     Button {
+                         switch currentView {
+                         case .scanView:
+                             currentView = .mapView
+                         case .mapView:
+                             currentView = .scanView
+                         default:
+                             currentView = .scanView
+                         }
+                     } label: {
+                         switch currentView {
+                         case .scanView:
+                             Image(systemName: "map")
+                
+                         case .mapView:
+                             Image(systemName: "list.triangle")
+                
+                         default:
+                             Image(systemName: "map")
+                         }
+                     }
+                 }*/
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         scanner.isScanning ? scanner.stop() : scanner.start()

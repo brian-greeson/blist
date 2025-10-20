@@ -17,11 +17,12 @@ struct BleDevice: Identifiable {
     var locations: [LocationWithRssi]
 }
 
-final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-    @MainActor @Published var devices: [UUID: BleDevice] = [:]
-    @MainActor @Published var isScanning = false
-    @MainActor @Published var state: CBManagerState = .unknown
-    @MainActor var statusText: String {
+@MainActor
+final class BLEScanner: NSObject, ObservableObject, @MainActor CBCentralManagerDelegate, @MainActor CBPeripheralDelegate {
+    @Published var devices: [UUID: BleDevice] = [:]
+    @Published var isScanning = false
+    @Published var state: CBManagerState = .unknown
+    var statusText: String {
         switch state {
         case .unknown: return "Bluetooth state: unknown"
         case .resetting: return "Bluetooth state: resetting"
@@ -33,25 +34,22 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         }
     }
     
-    @ObservedObject var locationManager = LocationManager()
+    let locationManager: LocationManager
     private var central: CBCentralManager!
     private var peripherals: [UUID: CBPeripheral] = [:]
 
     override init() {
+        self.locationManager = LocationManager()
         super.init()
         central = CBCentralManager(delegate: self, queue: nil)
         if locationManager.authorized != true {
             locationManager.request()
-
         }
-
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        Task { @MainActor in
-            state = central.state
-            if state != .poweredOn { isScanning = false }
-        }
+        state = central.state
+        if state != .poweredOn { isScanning = false }
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -83,46 +81,44 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             peripherals[id] = peripheral
         }
 
-        Task { @MainActor in
-            let now = Date()
-            if var device = devices[id] {
-                // Throttle update to 1 second
-                if abs(now.timeIntervalSince(device.lastUpdated)) > 1 {
-                    device.name = name
-                    device.services = services
+        let now = Date()
+        if var device = devices[id] {
+            // Throttle update to 1 second
+            if abs(now.timeIntervalSince(device.lastUpdated)) > 1 {
+                device.name = name
+                device.services = services
 
-                    // RSSI must be updated before location updates
-                    if abs(device.rssi - newRSSI) >= 2 {
-                        device.rssi = newRSSI
-                    }
+                // RSSI must be updated before location updates
+                if abs(device.rssi - newRSSI) >= 2 {
+                    device.rssi = newRSSI
+                }
 
-                    if let location = locationManager.location {
-                        if let lastLocation = device.locations.last {
-                            let distance = location.distance(from: lastLocation.location)
-                            if distance >= 1 {  // threshold; adjust as needed
-                                device.locations.append(LocationWithRssi(location: location, rssi: device.rssi))
-                            }
-                        } else {
+                if let location = locationManager.location {
+                    if let lastLocation = device.locations.last {
+                        let distance = location.distance(from: lastLocation.location)
+                        if distance >= 1 {  // threshold; adjust as needed
                             device.locations.append(LocationWithRssi(location: location, rssi: device.rssi))
                         }
                     } else {
-                        print("no location manager location")
+                        device.locations.append(LocationWithRssi(location: location, rssi: device.rssi))
                     }
-                    device.lastUpdated = now
-                    devices[id] = device
+                } else {
+                    print("no location manager location")
                 }
-            } else {
-                if let location = locationManager.location {
-                    devices[id] = BleDevice(
-                        id: id,
-                        name: name,
-                        rssi: newRSSI,
-                        advertisementData: advertisementData,
-                        lastUpdated: now,
-                        services: services,
-                        locations: [LocationWithRssi(location: location, rssi: newRSSI)]
-                    )
-                }
+                device.lastUpdated = now
+                devices[id] = device
+            }
+        } else {
+            if let location = locationManager.location {
+                devices[id] = BleDevice(
+                    id: id,
+                    name: name,
+                    rssi: newRSSI,
+                    advertisementData: advertisementData,
+                    lastUpdated: now,
+                    services: services,
+                    locations: [LocationWithRssi(location: location, rssi: newRSSI)]
+                )
             }
         }
     }
@@ -135,13 +131,11 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             print("Error discovering services: \(String(describing: error))")
             return
         }
-        Task { @MainActor in
-            devices[peripheral.identifier]?.services = peripheral.services ?? []
-        }
+        devices[peripheral.identifier]?.services = peripheral.services ?? []
     }
 
     // Scanner API
-    @MainActor func start() {
+    func start() {
         guard central.state == .poweredOn else { return }
         devices.removeAll()
         isScanning = true
@@ -151,13 +145,13 @@ final class BLEScanner: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         )
     }
 
-    @MainActor func stop() {
+    func stop() {
         guard isScanning else { return }
         central.stopScan()
         isScanning = false
     }
 
-    @MainActor func connect(_ deviceId: UUID) {
+    func connect(_ deviceId: UUID) {
         guard let peripheral = peripherals[deviceId] else {
             print("Could not find peripheral with ID \(deviceId)")
             return

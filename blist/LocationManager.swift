@@ -9,7 +9,8 @@ import CoreLocation
 import Foundation
 import SwiftUI
 
-final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+@MainActor
+final class LocationManager: NSObject, ObservableObject, @MainActor CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     @Published var authorized = false
     @Published var location: CLLocation?
@@ -39,9 +40,9 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Use the most recent location
         if let latest = locations.last {
-            DispatchQueue.main.async {
-                self.location = latest
-            }
+            assert(Thread.isMainThread)
+            self.location = latest
         }
     }
 }
+
