@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D31DFCF62EA62A0600CFC8B1 /* blistAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D384534B2E510ABC00BECEA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = blistAppIcon.icon; sourceTree = "<group>"; };
 		D384533D2E510ABB00BECEA3 /* blist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = blist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D384534A2E510ABC00BECEA3 /* blistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38453542E510ABC00BECEA3 /* blistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +80,7 @@
 		D38453342E510ABB00BECEA3 = {
 			isa = PBXGroup;
 			children = (
+				D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */,
 				D384533F2E510ABB00BECEA3 /* blist */,
 				D384534D2E510ABC00BECEA3 /* blistTests */,
 				D38453572E510ABC00BECEA3 /* blistUITests */,
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D31DFCF62EA62A0600CFC8B1 /* blistAppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,8 +400,9 @@
 		D384535F2E510ABC00BECEA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = blistAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 27C878UH3T;
@@ -424,8 +432,9 @@
 		D38453602E510ABC00BECEA3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = blistAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 27C878UH3T;
