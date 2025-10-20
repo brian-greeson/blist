@@ -14,6 +14,8 @@ struct ScanView: View {
     @Environment(\.modelContext) var modelContext
     @State private var hideUnknowns: Bool = false
     @State private var showDeviceDetails: Bool = false
+    @State private var isProUnlock = true
+    @State private var showPurchaseAlert = false
 
     @Binding var selectedDevice: BleDevice?
     @ObservedObject var scanner: BLEScanner
@@ -25,7 +27,7 @@ struct ScanView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
-            
+
             let favorites = Set(favoriteDevices.map(\.id))
             let sortedDevices = scanner.devices.sorted { $0.value.rssi > $1.value.rssi }
             let nearbyDevices = sortedDevices.filter { !favorites.contains($0.key) }
@@ -40,23 +42,17 @@ struct ScanView: View {
                             .foregroundStyle(.secondary)
                     } else {
                         ForEach(favoriteDevices, id: \.key) { id, device in
-                            HStack {
-                                Button {
-                                    selectedDevice = device
-                                    showDeviceDetails = true
-                                } label: {
-                                    DeviceCard(id: id, device: device)
-                                }
-                                .buttonStyle(.plain)
-                                .buttonStyle(.borderless)
-                                Button {
+                            DeviceListItemView(
+                                id: id,
+                                device: device,
+                                isFavorite: true,
+                                selectedDevice: $selectedDevice,
+                                showDeviceDetails: $showDeviceDetails,
+                                onRemoveFavorite: {
                                     let newDevice = FavoriteDevice(id: device.id, name: device.name)
                                     removeFavorite(newDevice)
-                                } label: {
-                                    Image(systemName: "star.fill")
                                 }
-                                .buttonStyle(.borderless)
-                            }
+                            )
                         }
                     }
                 } header: {
@@ -66,31 +62,30 @@ struct ScanView: View {
                         Text("\(favoriteDevices.count) Favorites")
                     }
                 }
-
                 Section {
                     ForEach(nearbyDevices, id: \.key) { id, device in
-                        HStack {
-                            Button {
-                                selectedDevice = device
-                                showDeviceDetails = true
-                            } label: {
-                                DeviceCard(id: id, device: device)
-                            }
-                            .buttonStyle(.plain)
-                            .buttonStyle(.borderless)
-                            Button {
+                        DeviceListItemView(
+                            id: id,
+                            device: device,
+                            isFavorite: false,
+                            selectedDevice: $selectedDevice,
+                            showDeviceDetails: $showDeviceDetails,
+                            onAddFavorite: {
                                 let newDevice = FavoriteDevice(id: device.id, name: device.name)
                                 addFavorite(newDevice)
-                            } label: {
-                                Image(systemName: "star")
                             }
-                            .buttonStyle(.borderless)
-                        }
+                        )
                     }
                 } header: {
                     HStack {
                         Button {
-                            hideUnknowns.toggle()
+                            if (isProUnlock) {
+                                hideUnknowns.toggle()
+                            } else {
+                                //TODO: Show purchase card
+                                showPurchaseAlert = true
+                            }
+
                         } label: {
                             Text(hideUnknowns ? "Show all" : "Hide Unknown")
                                 .font(.caption)
@@ -103,13 +98,11 @@ struct ScanView: View {
             }
         }
         .sheet(item: $selectedDevice) { device in
-
             DeviceDetailView(scanner: scanner, id: device.id)
                 .onAppear {
                     print("appeared")
                     scanner.connect(device.id)
                 }
-
         }
     }
 

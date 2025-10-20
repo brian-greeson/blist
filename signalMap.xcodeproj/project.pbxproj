@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D31DFCF62EA62A0600CFC8B1 /* blistAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */; };
+		D31DFCFD2EA69C4700CFC8B1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31DFCFC2EA69C4700CFC8B1 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = blistAppIcon.icon; sourceTree = "<group>"; };
+		D31DFCFC2EA69C4700CFC8B1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		D384533D2E510ABB00BECEA3 /* blist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = blist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D384534A2E510ABC00BECEA3 /* blistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38453542E510ABC00BECEA3 /* blistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D31DFCFD2EA69C4700CFC8B1 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +80,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D31DFCFB2EA69C4700CFC8B1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D31DFCFC2EA69C4700CFC8B1 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D38453342E510ABB00BECEA3 = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +95,7 @@
 				D384533F2E510ABB00BECEA3 /* blist */,
 				D384534D2E510ABC00BECEA3 /* blistTests */,
 				D38453572E510ABC00BECEA3 /* blistUITests */,
+				D31DFCFB2EA69C4700CFC8B1 /* Frameworks */,
 				D384533E2E510ABB00BECEA3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -192,7 +204,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "blist" */;
+			buildConfigurationList = D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "signalMap" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -421,7 +433,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.6;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mountainsentry.blist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mountainsentry.signalmap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
@@ -453,7 +465,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.6;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mountainsentry.blist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mountainsentry.signalmap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
@@ -536,7 +548,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "blist" */ = {
+		D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "signalMap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D384535C2E510ABC00BECEA3 /* Debug */,

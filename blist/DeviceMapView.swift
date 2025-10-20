@@ -66,7 +66,7 @@ struct DeviceMapView: View {
         var minY = pts.map(\.y).min()!
         var maxY = pts.map(\.y).max()!
 
-        // Padding 
+        // Padding
         let pad = gridSizeMeters * 2.0
         minX -= pad
         minY -= pad
@@ -125,26 +125,23 @@ struct DeviceMapView: View {
     var body: some View {
         let cells = buildCells()
         HStack {
-            if device.locations.count > 0 {
+            Map {
+                UserAnnotation()
+                // Heat cells
+                ForEach(cells) { cell in
+                    MapPolygon(coordinates: cell.coords)
+                        .foregroundStyle(cell.color)
+                        .stroke(.clear)
+                }
+            }.mapStyle(.hybrid())
+                .onChange(of: device.locations.count) { oldValue, newValue in
+                    print(
+                        device.locations.map {
+                            "\($0.location.coordinate.latitude),\($0.location.coordinate.longitude)"
+                        }
+                    )
+                }
 
-                Map {
-                    // Heat cells
-                    ForEach(cells) { cell in
-                        MapPolygon(coordinates: cell.coords)
-                            .foregroundStyle(cell.color)
-                            .stroke(.clear)
-                    }
-                }.mapStyle(.hybrid())
-                    .onChange(of: device.locations.count) { oldValue, newValue in
-                        print(
-                            device.locations.map {
-                                "\($0.location.coordinate.latitude),\($0.location.coordinate.longitude)"
-                            }
-                        )
-                    }
-            } else {
-                Text("Location Disabled")
-            }
         }
 
     }
