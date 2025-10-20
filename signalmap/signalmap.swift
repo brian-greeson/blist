@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 @main
-struct blistApp: App {
+struct signalMapApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

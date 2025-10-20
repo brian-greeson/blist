@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D31DFCF62EA62A0600CFC8B1 /* blistAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */; };
+		D31DFCF62EA62A0600CFC8B1 /* signalMapAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D31DFCF52EA62A0600CFC8B1 /* signalMapAppIcon.icon */; };
 		D31DFCFD2EA69C4700CFC8B1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31DFCFC2EA69C4700CFC8B1 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,27 +29,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = blistAppIcon.icon; sourceTree = "<group>"; };
+		D31DFCF52EA62A0600CFC8B1 /* signalMapAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = signalMapAppIcon.icon; sourceTree = "<group>"; };
 		D31DFCFC2EA69C4700CFC8B1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		D384533D2E510ABB00BECEA3 /* blist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = blist.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D384534A2E510ABC00BECEA3 /* blistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D38453542E510ABC00BECEA3 /* blistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D384533D2E510ABB00BECEA3 /* signalmap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = signalmap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D384534A2E510ABC00BECEA3 /* signamMapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = signamMapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D38453542E510ABC00BECEA3 /* signalMapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = signalMapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D384533F2E510ABB00BECEA3 /* blist */ = {
+		D384533F2E510ABB00BECEA3 /* signalmap */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = blist;
+			path = signalmap;
 			sourceTree = "<group>";
 		};
-		D384534D2E510ABC00BECEA3 /* blistTests */ = {
+		D384534D2E510ABC00BECEA3 /* signalMapTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = blistTests;
+			path = signalMapTests;
 			sourceTree = "<group>";
 		};
-		D38453572E510ABC00BECEA3 /* blistUITests */ = {
+		D38453572E510ABC00BECEA3 /* signalMapUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = blistUITests;
+			path = signalMapUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -91,10 +91,10 @@
 		D38453342E510ABB00BECEA3 = {
 			isa = PBXGroup;
 			children = (
-				D31DFCF52EA62A0600CFC8B1 /* blistAppIcon.icon */,
-				D384533F2E510ABB00BECEA3 /* blist */,
-				D384534D2E510ABC00BECEA3 /* blistTests */,
-				D38453572E510ABC00BECEA3 /* blistUITests */,
+				D31DFCF52EA62A0600CFC8B1 /* signalMapAppIcon.icon */,
+				D384533F2E510ABB00BECEA3 /* signalmap */,
+				D384534D2E510ABC00BECEA3 /* signalMapTests */,
+				D38453572E510ABC00BECEA3 /* signalMapUITests */,
 				D31DFCFB2EA69C4700CFC8B1 /* Frameworks */,
 				D384533E2E510ABB00BECEA3 /* Products */,
 			);
@@ -103,9 +103,9 @@
 		D384533E2E510ABB00BECEA3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D384533D2E510ABB00BECEA3 /* blist.app */,
-				D384534A2E510ABC00BECEA3 /* blistTests.xctest */,
-				D38453542E510ABC00BECEA3 /* blistUITests.xctest */,
+				D384533D2E510ABB00BECEA3 /* signalmap.app */,
+				D384534A2E510ABC00BECEA3 /* signamMapTests.xctest */,
+				D38453542E510ABC00BECEA3 /* signalMapUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,9 +113,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D384533C2E510ABB00BECEA3 /* blist */ = {
+		D384533C2E510ABB00BECEA3 /* signalmap */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D384535E2E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "blist" */;
+			buildConfigurationList = D384535E2E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "signalmap" */;
 			buildPhases = (
 				D38453392E510ABB00BECEA3 /* Sources */,
 				D384533A2E510ABB00BECEA3 /* Frameworks */,
@@ -126,18 +126,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				D384533F2E510ABB00BECEA3 /* blist */,
+				D384533F2E510ABB00BECEA3 /* signalmap */,
 			);
-			name = blist;
+			name = signalmap;
 			packageProductDependencies = (
 			);
 			productName = blist;
-			productReference = D384533D2E510ABB00BECEA3 /* blist.app */;
+			productReference = D384533D2E510ABB00BECEA3 /* signalmap.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D38453492E510ABC00BECEA3 /* blistTests */ = {
+		D38453492E510ABC00BECEA3 /* signamMapTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D38453612E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "blistTests" */;
+			buildConfigurationList = D38453612E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "signamMapTests" */;
 			buildPhases = (
 				D38453462E510ABC00BECEA3 /* Sources */,
 				D38453472E510ABC00BECEA3 /* Frameworks */,
@@ -149,18 +149,18 @@
 				D384534C2E510ABC00BECEA3 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				D384534D2E510ABC00BECEA3 /* blistTests */,
+				D384534D2E510ABC00BECEA3 /* signalMapTests */,
 			);
-			name = blistTests;
+			name = signamMapTests;
 			packageProductDependencies = (
 			);
 			productName = blistTests;
-			productReference = D384534A2E510ABC00BECEA3 /* blistTests.xctest */;
+			productReference = D384534A2E510ABC00BECEA3 /* signamMapTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D38453532E510ABC00BECEA3 /* blistUITests */ = {
+		D38453532E510ABC00BECEA3 /* signalMapUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D38453642E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "blistUITests" */;
+			buildConfigurationList = D38453642E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "signalMapUITests" */;
 			buildPhases = (
 				D38453502E510ABC00BECEA3 /* Sources */,
 				D38453512E510ABC00BECEA3 /* Frameworks */,
@@ -172,13 +172,13 @@
 				D38453562E510ABC00BECEA3 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				D38453572E510ABC00BECEA3 /* blistUITests */,
+				D38453572E510ABC00BECEA3 /* signalMapUITests */,
 			);
-			name = blistUITests;
+			name = signalMapUITests;
 			packageProductDependencies = (
 			);
 			productName = blistUITests;
-			productReference = D38453542E510ABC00BECEA3 /* blistUITests.xctest */;
+			productReference = D38453542E510ABC00BECEA3 /* signalMapUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -204,7 +204,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "signalMap" */;
+			buildConfigurationList = D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "signalmap" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -218,9 +218,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D384533C2E510ABB00BECEA3 /* blist */,
-				D38453492E510ABC00BECEA3 /* blistTests */,
-				D38453532E510ABC00BECEA3 /* blistUITests */,
+				D384533C2E510ABB00BECEA3 /* signalmap */,
+				D38453492E510ABC00BECEA3 /* signamMapTests */,
+				D38453532E510ABC00BECEA3 /* signalMapUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -230,7 +230,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D31DFCF62EA62A0600CFC8B1 /* blistAppIcon.icon in Resources */,
+				D31DFCF62EA62A0600CFC8B1 /* signalMapAppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,12 +277,12 @@
 /* Begin PBXTargetDependency section */
 		D384534C2E510ABC00BECEA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D384533C2E510ABB00BECEA3 /* blist */;
+			target = D384533C2E510ABB00BECEA3 /* signalmap */;
 			targetProxy = D384534B2E510ABC00BECEA3 /* PBXContainerItemProxy */;
 		};
 		D38453562E510ABC00BECEA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D384533C2E510ABB00BECEA3 /* blist */;
+			target = D384533C2E510ABB00BECEA3 /* signalmap */;
 			targetProxy = D38453552E510ABC00BECEA3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -412,7 +412,7 @@
 		D384535F2E510ABC00BECEA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = blistAppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = signalMapAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -420,6 +420,7 @@
 				DEVELOPMENT_TEAM = 27C878UH3T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SignalMap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to scan for nearby devices.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location will be used to show nearby bluetooth devices";
@@ -444,7 +445,7 @@
 		D38453602E510ABC00BECEA3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = blistAppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = signalMapAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -452,6 +453,7 @@
 				DEVELOPMENT_TEAM = 27C878UH3T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SignalMap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to scan for nearby devices.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location will be used to show nearby bluetooth devices";
@@ -548,7 +550,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "signalMap" */ = {
+		D38453382E510ABB00BECEA3 /* Build configuration list for PBXProject "signalmap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D384535C2E510ABC00BECEA3 /* Debug */,
@@ -557,7 +559,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D384535E2E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "blist" */ = {
+		D384535E2E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "signalmap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D384535F2E510ABC00BECEA3 /* Debug */,
@@ -566,7 +568,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D38453612E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "blistTests" */ = {
+		D38453612E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "signamMapTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D38453622E510ABC00BECEA3 /* Debug */,
@@ -575,7 +577,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D38453642E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "blistUITests" */ = {
+		D38453642E510ABC00BECEA3 /* Build configuration list for PBXNativeTarget "signalMapUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D38453652E510ABC00BECEA3 /* Debug */,
