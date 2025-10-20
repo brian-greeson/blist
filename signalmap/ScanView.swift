@@ -14,13 +14,15 @@ struct ScanView: View {
     @Environment(\.modelContext) var modelContext
     @State private var hideUnknowns: Bool = false
     @State private var showDeviceDetails: Bool = false
-    @State private var isProUnlock = true
+
     @State private var showPurchaseAlert = false
 
     @Binding var selectedDevice: BleDevice?
     @ObservedObject var scanner: BLEScanner
     @Query var favoriteDevices: [FavoriteDevice]
+    @ObservedObject var store: StoreViewModel
     var body: some View {
+
         NavigationStack {
             if scanner.state != CBManagerState.poweredOn {
                 Text(scanner.statusText)
@@ -51,7 +53,8 @@ struct ScanView: View {
                                 onRemoveFavorite: {
                                     let newDevice = FavoriteDevice(id: device.id, name: device.name)
                                     removeFavorite(newDevice)
-                                }
+                                },
+                                //                                store: store
                             )
                         }
                     }
@@ -73,13 +76,14 @@ struct ScanView: View {
                             onAddFavorite: {
                                 let newDevice = FavoriteDevice(id: device.id, name: device.name)
                                 addFavorite(newDevice)
-                            }
+                            },
+                            //                            store: store
                         )
                     }
                 } header: {
                     HStack {
                         Button {
-                            if (isProUnlock) {
+                            if store.isPurchased {
                                 hideUnknowns.toggle()
                             } else {
                                 //TODO: Show purchase card
@@ -96,7 +100,21 @@ struct ScanView: View {
                     }
                 }
             }
-        }
+        }.alert(
+            "Purchase",
+            isPresented: $showPurchaseAlert,
+            actions: {
+                Button("Buy") {
+                    Task { await store.purchase() }
+                }
+                Button("Cancel", role: .cancel) {}
+            },
+            message: {
+                Text(
+                    "Enable Filtering and Favorites by purchasing an lifetime unlock for \(store.product?.displayPrice ?? "")"
+                )
+            }
+        )
         .sheet(item: $selectedDevice) { device in
             DeviceDetailView(scanner: scanner, id: device.id)
                 .onAppear {
@@ -107,6 +125,10 @@ struct ScanView: View {
     }
 
     func addFavorite(_ device: FavoriteDevice) {
+        guard store.isPurchased else {
+            showPurchaseAlert = true
+            return
+        }
         if !favoriteDevices.contains(where: { $0.self.id == device.id }) {
             modelContext.insert(device)
             do {
@@ -118,6 +140,10 @@ struct ScanView: View {
     }
 
     func removeFavorite(_ device: FavoriteDevice) {
+        guard store.isPurchased else {
+            showPurchaseAlert = true
+            return
+        }
         if let matchIndex = favoriteDevices.firstIndex(where: { $0.self.id == device.id }) {
             print("deleting \(device)")
             modelContext.delete(favoriteDevices[matchIndex])
@@ -132,5 +158,5 @@ struct ScanView: View {
 
 #Preview {
     @Previewable @State var previewSelected: BleDevice? = nil
-    ScanView(selectedDevice: $previewSelected, scanner: BLEScanner())
+    ScanView(selectedDevice: $previewSelected, scanner: BLEScanner(), store: StoreViewModel())
 }

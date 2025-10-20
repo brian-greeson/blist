@@ -13,8 +13,11 @@ struct DeviceListItemView: View {
     let isFavorite: Bool
     @Binding var selectedDevice: BleDevice?
     @Binding var showDeviceDetails: Bool
+//    @ObservedObject var store: StoreViewModel
     let onRemoveFavorite: (() -> Void)?
     let onAddFavorite: (() -> Void)?
+
+    @State private var showPurchaseAlert = false
 
     init(
         id: UUID,
@@ -23,7 +26,8 @@ struct DeviceListItemView: View {
         selectedDevice: Binding<BleDevice?>,
         showDeviceDetails: Binding<Bool>,
         onRemoveFavorite: (() -> Void)? = nil,
-        onAddFavorite: (() -> Void)? = nil
+        onAddFavorite: (() -> Void)? = nil,
+//        store: StoreViewModel,
     ) {
         self.id = id
         self.device = device
@@ -32,6 +36,7 @@ struct DeviceListItemView: View {
         self._showDeviceDetails = showDeviceDetails
         self.onRemoveFavorite = onRemoveFavorite
         self.onAddFavorite = onAddFavorite
+//        self.store = store
     }
 
     var body: some View {
@@ -79,6 +84,6 @@ struct DeviceListItemView: View {
         device: device,
         isFavorite: false,
         selectedDevice: .constant(device),
-        showDeviceDetails: .constant(false)
+        showDeviceDetails: .constant(false),
     )
 }

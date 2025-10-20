@@ -18,7 +18,7 @@
                BlueprintIdentifier = "D384533C2E510ABB00BECEA3"
                BuildableName = "signalmap.app"
                BlueprintName = "signalmap"
-               ReferencedContainer = "container:signalMap.xcodeproj">
+               ReferencedContainer = "container:signalmap.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -38,7 +38,7 @@
                BlueprintIdentifier = "D38453492E510ABC00BECEA3"
                BuildableName = "signamMapTests.xctest"
                BlueprintName = "signamMapTests"
-               ReferencedContainer = "container:signalMap.xcodeproj">
+               ReferencedContainer = "container:signalmap.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -49,7 +49,7 @@
                BlueprintIdentifier = "D38453532E510ABC00BECEA3"
                BuildableName = "signalMapUITests.xctest"
                BlueprintName = "signalMapUITests"
-               ReferencedContainer = "container:signalMap.xcodeproj">
+               ReferencedContainer = "container:signalmap.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,12 @@
             BlueprintIdentifier = "D384533C2E510ABB00BECEA3"
             BuildableName = "signalmap.app"
             BlueprintName = "signalmap"
-            ReferencedContainer = "container:signalMap.xcodeproj">
+            ReferencedContainer = "container:signalmap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference
+         identifier = "../../signalmap/signalmapStore.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -88,7 +91,7 @@
             BlueprintIdentifier = "D384533C2E510ABB00BECEA3"
             BuildableName = "signalmap.app"
             BlueprintName = "signalmap"
-            ReferencedContainer = "container:signalMap.xcodeproj">
+            ReferencedContainer = "container:signalmap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
@@ -97,6 +100,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "signalmap"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

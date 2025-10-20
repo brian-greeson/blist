@@ -149,8 +149,6 @@ struct DeviceMapView: View {
 
 #Preview {
     let adData: [String: Any] = ["kCBAdvDataLocalName": "Test Device", "kCBAdvDataIsConnectable": true]
-    let secondsAgo: TimeInterval = 1
-
     let locations = [
         LocationWithRssi(
             location: CLLocation(
